@@ -1,0 +1,955 @@
+zabbix_export:
+  version: '6.4'
+  template_groups:
+    - uuid: b5b41aae1d65468186019f06a83d7ebb
+      name: Templates
+  host_groups:
+    - uuid: 514ab8ebc2424e608e6010b31d81f122
+      name: 'Discovered hosts'
+  templates:
+    - uuid: 6941ba8bd9064f99a51ce55278e66a75
+      template: template_Cisco_WiFi_WLC_62
+      name: template_Cisco_WiFi_WLC_62
+      description: |
+        The main template, add to the controller, all APs are created by nodes in the network, using node discovery.
+        Requires Zabbix 6.2
+      groups:
+        - name: Templates
+      items:
+        - uuid: d003363470564e89b80e0cd452b0b210
+          name: 'WLC CPUs Usage'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.14179.1.1.5.1.0
+          key: agentCurrentCPUUtilization
+          delay: '60'
+          history: 7d
+          status: DISABLED
+          units: '%'
+          tags:
+            - tag: Application
+              value: General
+        - uuid: f8ca052b354c4bda8ed6e6a6f5e924c9
+          name: 'WLC Free RAM'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.14179.1.1.5.3.0
+          key: agentFreeMemory
+          delay: '60'
+          history: 7d
+          status: DISABLED
+          units: B
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '1024'
+          tags:
+            - tag: Application
+              value: General
+        - uuid: fd0066cdd1bf4be5a03302a4738e4b20
+          name: 'WLC Machine Model'
+          type: SNMP_AGENT
+          snmp_oid: 'AIRESPACE-REF-MIB::airespace.1.1.1.3.0'
+          key: agentInventoryMachineModel
+          delay: '3600'
+          history: 1d
+          trends: '0'
+          status: DISABLED
+          inventory_link: MODEL
+          tags:
+            - tag: Application
+              value: General
+        - uuid: 2ed0c86c9af044eaa392cfec6c936ed2
+          name: 'WLC Max Number Of APs Supported'
+          type: SNMP_AGENT
+          snmp_oid: 'AIRESPACE-REF-MIB::airespace.1.1.1.18.0'
+          key: agentInventoryMaxNumberOfAPsSupported
+          delay: '3600'
+          history: 1d
+          trends: '0'
+          status: DISABLED
+          tags:
+            - tag: Application
+              value: General
+        - uuid: 3927a7e8cb5c4940a012836431d107bf
+          name: 'WLC Operating System'
+          type: SNMP_AGENT
+          snmp_oid: 'AIRESPACE-REF-MIB::airespace.1.1.1.10.0'
+          key: agentInventoryOperatingSystem
+          delay: '3600'
+          history: 1d
+          trends: '0'
+          status: DISABLED
+          tags:
+            - tag: Application
+              value: General
+        - uuid: cf5841b6631949e78dd5344e1293bc52
+          name: 'WLC Product Version'
+          type: SNMP_AGENT
+          snmp_oid: 'AIRESPACE-REF-MIB::airespace.1.1.1.14.0'
+          key: agentInventoryProductVersion
+          delay: '3600'
+          history: 1d
+          trends: '0'
+          status: DISABLED
+          tags:
+            - tag: Application
+              value: General
+        - uuid: 4e192c1564a14ceaa616b7c5bd0c0f08
+          name: 'WLC Serial Number'
+          type: SNMP_AGENT
+          snmp_oid: 'AIRESPACE-REF-MIB::airespace.1.1.1.4.0'
+          key: agentInventorySerialNumber
+          delay: '3600'
+          history: 1d
+          trends: '0'
+          status: DISABLED
+          tags:
+            - tag: Application
+              value: General
+        - uuid: 7d28a3b8fe7d4a69aa768745e48e807b
+          name: 'WLC Total RAM'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.14179.1.1.5.2.0
+          key: agentTotalMemory
+          delay: '86400'
+          history: 1d
+          trends: 7d
+          status: DISABLED
+          units: B
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '1024'
+          tags:
+            - tag: Application
+              value: General
+        - uuid: f7f76f0072ce4b63960f8c87d146cf22
+          name: 'WLC System name'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.1.5.0
+          key: system.name
+          delay: 1h
+          trends: '0'
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1h
+          tags:
+            - tag: Application
+              value: General
+          triggers:
+            - uuid: 108d512c4ef740419842ee782c34b217
+              expression: 'last(/template_Cisco_WiFi_WLC_62/system.name,#1)<>last(/template_Cisco_WiFi_WLC_62/system.name,#2) and length(last(/template_Cisco_WiFi_WLC_62/system.name))>0'
+              name: 'System name has changed (new name: {ITEM.VALUE})'
+              priority: INFO
+              description: 'System name has changed. Ack to close.'
+              manual_close: 'YES'
+        - uuid: 172563f5536f40ba8b4d49cc420474e3
+          name: 'WLC Uptime'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.1.3.0
+          key: system.uptime
+          trends: '0'
+          units: uptime
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '0.01'
+          tags:
+            - tag: Application
+              value: Status
+          triggers:
+            - uuid: 6be94d1ad1e24605ae6b0fc05723db4b
+              expression: last(/template_Cisco_WiFi_WLC_62/system.uptime)<10m
+              name: '{HOST.NAME} has been restarted (uptime < 10m)'
+              priority: WARNING
+              description: 'Uptime is less than 10 minutes'
+              manual_close: 'YES'
+        - uuid: 13421bb295a04c219aacabe642ee5a4e
+          name: 'WLC ipAddres'
+          type: INTERNAL
+          key: 'zabbix[host,discovery,interfaces]'
+          delay: 2h
+          trends: '0'
+          preprocessing:
+            - type: REGEX
+              parameters:
+                - '#IF.CONN(.+)#IF.IP'
+                - \1
+            - type: LTRIM
+              parameters:
+                - '}":"'
+            - type: RTRIM
+              parameters:
+                - '","{'
+          tags:
+            - tag: Application
+              value: General
+        - uuid: 631f1ea85ab040ad969ca602f335a041
+          name: 'WLC SNMP agent availability'
+          type: INTERNAL
+          key: 'zabbix[host,snmp,available]'
+          valuemap:
+            name: zabbix.host.available
+          tags:
+            - tag: Application
+              value: Status
+          triggers:
+            - uuid: 0dd7cea9ecfb4e879f03839f5eaedc85
+              expression: 'max(/template_Cisco_WiFi_WLC_62/zabbix[host,snmp,available],{$SNMP.TIMEOUT})=0'
+              name: 'No SNMP data collection'
+              opdata: 'Current state: {ITEM.LASTVALUE1}'
+              priority: HIGH
+              description: 'SNMP is not available for polling. Please check device connectivity and SNMP settings.'
+      discovery_rules:
+        - uuid: fbbb820623d449a081a6dd615231912a
+          name: 'AP discovery (Name)'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#APNAME},1.3.6.1.4.1.14179.2.2.1.1.4]'
+          key: ap.discovery
+          item_prototypes:
+            - uuid: 824620f6fb9148ffb15e52f062178513
+              name: 'AP {#APNAME} Channel Utilization % (2.4G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.13.1.3.{#SNMPINDEX}.0'
+              key: 'ap.radio.channel.util[{#SNMPINDEX},0]'
+              units: '%'
+              tags:
+                - tag: ap
+                  value: '{#APNAME}'
+                - tag: band
+                  value: 2.4G
+                - tag: component
+                  value: rf
+            - uuid: a87edb52d674416c99a5a6145f659777
+              name: 'AP {#APNAME} Channel Utilization % (5G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.13.1.3.{#SNMPINDEX}.1'
+              key: 'ap.radio.channel.util[{#SNMPINDEX},1]'
+              units: '%'
+              tags:
+                - tag: ap
+                  value: '{#APNAME}'
+                - tag: band
+                  value: 5G
+                - tag: component
+                  value: rf
+            - uuid: abb5b3f1a5f8491fa1a2fe8456f396e9
+              name: 'AP {#APNAME} Clients (Total)'
+              type: CALCULATED
+              key: 'ap.radio.clients.total[{#SNMPINDEX}]'
+              params: 'last(//ap.radio.clients[{#SNMPINDEX},0]) + last(//ap.radio.clients[{#SNMPINDEX},1])'
+              tags:
+                - tag: ap
+                  value: '{#APNAME}'
+                - tag: component
+                  value: rf
+                - tag: scope
+                  value: total
+            - uuid: 190fb393172f470881cdb206fc336d7f
+              name: 'AP {#APNAME} Clients (2.4G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.13.1.4.{#SNMPINDEX}.0'
+              key: 'ap.radio.clients[{#SNMPINDEX},0]'
+              tags:
+                - tag: ap
+                  value: '{#APNAME}'
+                - tag: band
+                  value: 2.4G
+                - tag: component
+                  value: rf
+            - uuid: c38a6c35a73e461b948a70e2b72dc31d
+              name: 'AP {#APNAME} Clients (5G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.13.1.4.{#SNMPINDEX}.1'
+              key: 'ap.radio.clients[{#SNMPINDEX},1]'
+              tags:
+                - tag: ap
+                  value: '{#APNAME}'
+                - tag: band
+                  value: 5G
+                - tag: component
+                  value: rf
+            - uuid: 5d9836e463cf406a989bede91ed7d08f
+              name: 'AP {#APNAME} Interference Profile State (2.4G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.16.1.2.{#SNMPINDEX}.0'
+              key: 'ap.radio.interference.profile[{#SNMPINDEX},0]'
+              description: '0=Fail, 1=Pass'
+              tags:
+                - tag: ap
+                  value: '{#APNAME}'
+                - tag: band
+                  value: 2.4G
+                - tag: component
+                  value: rf
+            - uuid: 2a0e6c9d7b7c4525833ba835858f1c9c
+              name: 'AP {#APNAME} Interference Profile State (5G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.16.1.2.{#SNMPINDEX}.1'
+              key: 'ap.radio.interference.profile[{#SNMPINDEX},1]'
+              description: '0=Fail, 1=Pass'
+              tags:
+                - tag: ap
+                  value: '{#APNAME}'
+                - tag: band
+                  value: 5G
+                - tag: component
+                  value: rf
+            - uuid: d60a79fe6f92479c89ec9abbb74a732f
+              name: 'AP {#APNAME} Noise Profile State (2.4G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.16.1.3.{#SNMPINDEX}.0'
+              key: 'ap.radio.noise.profile[{#SNMPINDEX},0]'
+              description: '0=Fail, 1=Pass'
+              tags:
+                - tag: ap
+                  value: '{#APNAME}'
+                - tag: band
+                  value: 2.4G
+                - tag: component
+                  value: rf
+            - uuid: 32eb515a5536475c82b5874e6f3ba2a8
+              name: 'AP {#APNAME} Noise Profile State (5G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.16.1.3.{#SNMPINDEX}.1'
+              key: 'ap.radio.noise.profile[{#SNMPINDEX},1]'
+              description: '0=Fail, 1=Pass'
+              tags:
+                - tag: ap
+                  value: '{#APNAME}'
+                - tag: band
+                  value: 5G
+                - tag: component
+                  value: rf
+            - uuid: 8dca6bbf69f14b45b7b856701392437a
+              name: 'AP {#APNAME} Rx Utilization % (2.4G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.13.1.1.{#SNMPINDEX}.0'
+              key: 'ap.radio.rx.util[{#SNMPINDEX},0]'
+              units: '%'
+              tags:
+                - tag: ap
+                  value: '{#APNAME}'
+                - tag: band
+                  value: 2.4G
+                - tag: component
+                  value: rf
+            - uuid: 9d364ff1a12f43378c10cadcd559cbb2
+              name: 'AP {#APNAME} Rx Utilization % (5G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.13.1.1.{#SNMPINDEX}.1'
+              key: 'ap.radio.rx.util[{#SNMPINDEX},1]'
+              units: '%'
+              tags:
+                - tag: ap
+                  value: '{#APNAME}'
+                - tag: band
+                  value: 5G
+                - tag: component
+                  value: rf
+            - uuid: 57686ba9529044709163dc46287b3338
+              name: 'AP {#APNAME} Tx Utilization % (2.4G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.13.1.2.{#SNMPINDEX}.0'
+              key: 'ap.radio.tx.util[{#SNMPINDEX},0]'
+              units: '%'
+              tags:
+                - tag: ap
+                  value: '{#APNAME}'
+                - tag: band
+                  value: 2.4G
+                - tag: component
+                  value: rf
+            - uuid: 88a812f015c748d38a63f158d324bf96
+              name: 'AP {#APNAME} Tx Utilization % (5G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.13.1.2.{#SNMPINDEX}.1'
+              key: 'ap.radio.tx.util[{#SNMPINDEX},1]'
+              units: '%'
+              tags:
+                - tag: ap
+                  value: '{#APNAME}'
+                - tag: band
+                  value: 5G
+                - tag: component
+                  value: rf
+          graph_prototypes:
+            - uuid: fd34e68926dd4d68b1548f91423c2493
+              name: 'AP {#APNAME} Clients (2.4G)'
+              graph_items:
+                - color: 2774A4
+                  item:
+                    host: template_Cisco_WiFi_WLC_62
+                    key: 'ap.radio.clients[{#SNMPINDEX},0]'
+            - uuid: 7ba5a035883b49feb041c7f381d6009e
+              name: 'AP {#APNAME} Clients (5G)'
+              graph_items:
+                - color: 6C59DC
+                  item:
+                    host: template_Cisco_WiFi_WLC_62
+                    key: 'ap.radio.clients[{#SNMPINDEX},1]'
+            - uuid: 55fd5456c3e1414ba1ff48df9827abbf
+              name: 'AP {#APNAME} Clients (Total)'
+              graph_items:
+                - color: 1A7C11
+                  item:
+                    host: template_Cisco_WiFi_WLC_62
+                    key: 'ap.radio.clients.total[{#SNMPINDEX}]'
+            - uuid: 055aac3637b3471eb7aaa15a881be00c
+              name: '{#APNAME}'
+              graph_items:
+                - color: 2774A4
+                  item:
+                    host: template_Cisco_WiFi_WLC_62
+                    key: 'ap.radio.channel.util[{#SNMPINDEX},0]'
+                - color: 1A7C11
+                  item:
+                    host: template_Cisco_WiFi_WLC_62
+                    key: 'ap.radio.rx.util[{#SNMPINDEX},0]'
+                - color: F63100
+                  item:
+                    host: template_Cisco_WiFi_WLC_62
+                    key: 'ap.radio.tx.util[{#SNMPINDEX},0]'
+                - color: 6C59DC
+                  item:
+                    host: template_Cisco_WiFi_WLC_62
+                    key: 'ap.radio.channel.util[{#SNMPINDEX},1]'
+                - color: AC8C14
+                  item:
+                    host: template_Cisco_WiFi_WLC_62
+                    key: 'ap.radio.rx.util[{#SNMPINDEX},1]'
+                - color: E66B00
+                  item:
+                    host: template_Cisco_WiFi_WLC_62
+                    key: 'ap.radio.tx.util[{#SNMPINDEX},1]'
+        - uuid: 7fb6a1bdb661428f93ea2c4fe399eaf7
+          name: 'WLC AP data'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#SNMPVALUE},1.3.6.1.4.1.14179.2.2.1.1.3,{#SNMPIPAD},1.3.6.1.4.1.14179.2.2.1.1.19]'
+          key: bsnAPName
+          delay: 1h
+          lifetime: 14d
+          description: 'https://oidref.com/1.3.6.1.4.1.14179.2.2.1.1.3'
+          item_prototypes:
+            - uuid: 08e077631fad4449805a49bb8f15aec4
+              name: 'AP {#SNMPVALUE} Boot Version'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.1.1.9.{#SNMPINDEX}'
+              key: 'bsnAPBootVersion[{#SNMPVALUE}]'
+              delay: '3600'
+              history: 14d
+              trends: '0'
+              status: DISABLED
+              discover: NO_DISCOVER
+              description: 'Clients (Mobile Stations)'
+              tags:
+                - tag: Application
+                  value: 'AP data'
+                - tag: Name
+                  value: '{#SNMPVALUE}'
+            - uuid: c312c4dedc6042fa9c1dc065ed6be991
+              name: 'AP {#SNMPVALUE} MAC Address WiFi'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.1.1.1.{#SNMPINDEX}'
+              key: 'bsnAPDot3MacAddress[{#SNMPVALUE}]'
+              delay: '3600'
+              history: 14d
+              trends: '0'
+              status: DISABLED
+              discover: NO_DISCOVER
+              description: 'Clients (Mobile Stations)'
+              tags:
+                - tag: Application
+                  value: 'AP data'
+                - tag: Name
+                  value: '{#SNMPVALUE}'
+            - uuid: 475a256321d54f1c9afedef0b6b4a0f9
+              name: 'AP {#SNMPVALUE} MAC Address Ethernet'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.1.1.33.{#SNMPINDEX}'
+              key: 'bsnAPEthernetMacAddress[{#SNMPVALUE}]'
+              delay: '3600'
+              history: 14d
+              trends: '0'
+              status: DISABLED
+              discover: NO_DISCOVER
+              description: 'Clients (Mobile Stations)'
+              tags:
+                - tag: Application
+                  value: 'AP data'
+                - tag: Name
+                  value: '{#SNMPVALUE}'
+            - uuid: b907578747fa4f34aeeb46328e60b587
+              name: 'AP {#SNMPVALUE} If No Of Users 2.4 GHz'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.2.1.15.{#SNMPINDEX}.0'
+              key: 'bsnApIfNoOfUsers0[{#SNMPVALUE}]'
+              delay: '60'
+              history: 365d
+              trends: 30d
+              status: DISABLED
+              discover: NO_DISCOVER
+              description: 'No of Users associated with this radio.'
+              tags:
+                - tag: Application
+                  value: 'AP data'
+                - tag: Name
+                  value: '{#SNMPVALUE}'
+            - uuid: aff29cbeb1dd4242bc0e732cd626f917
+              name: 'AP {#SNMPVALUE} If No Of Users 5 GHz'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.2.1.15.{#SNMPINDEX}.1'
+              key: 'bsnApIfNoOfUsers1[{#SNMPVALUE}]'
+              delay: '60'
+              history: 365d
+              trends: 30d
+              status: DISABLED
+              discover: NO_DISCOVER
+              description: 'No of Users associated with this radio.'
+              tags:
+                - tag: Application
+                  value: 'AP data'
+                - tag: Name
+                  value: '{#SNMPVALUE}'
+            - uuid: 5a0cb11181754f379e758f29944f4fce
+              name: 'AP {#SNMPVALUE} If Phy Channel Number 2.4 GHz'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.2.1.4.{#SNMPINDEX}.0'
+              key: 'bsnAPIfPhyChannelNumber0[{#SNMPVALUE}]'
+              delay: '300'
+              history: 365d
+              trends: '0'
+              status: DISABLED
+              discover: NO_DISCOVER
+              description: |
+                Current channel number of the AP Interface.
+                Channel numbers  will be from 1 to 14 for 802.11b interface type.
+                Channel numbers will  be from 34 to 169 for 802.11a interface 
+                type.
+              tags:
+                - tag: Application
+                  value: 'AP data'
+                - tag: Name
+                  value: '{#SNMPVALUE}'
+            - uuid: 898b7047f0e1417d93b99f468dc31d6d
+              name: 'AP {#SNMPVALUE} If Phy Channel Number 5 GHz'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.2.1.4.{#SNMPINDEX}.1'
+              key: 'bsnAPIfPhyChannelNumber1[{#SNMPVALUE}]'
+              delay: '300'
+              history: 365d
+              trends: '0'
+              status: DISABLED
+              discover: NO_DISCOVER
+              description: |
+                Current channel number of the AP Interface.
+                Channel numbers  will be from 1 to 14 for 802.11b interface type.
+                Channel numbers will  be from 34 to 169 for 802.11a interface 
+                type.
+              tags:
+                - tag: Application
+                  value: 'AP data'
+                - tag: Name
+                  value: '{#SNMPVALUE}'
+            - uuid: 51bb4115f94e4a5db52d588f9f430ddc
+              name: 'AP {#SNMPVALUE} IOS Version'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.1.1.31.{#SNMPINDEX}'
+              key: 'bsnAPIOSVersion[{#SNMPVALUE}]'
+              delay: '3600'
+              history: 14d
+              trends: '0'
+              status: DISABLED
+              discover: NO_DISCOVER
+              description: 'Clients (Mobile Stations)'
+              tags:
+                - tag: Application
+                  value: 'AP data'
+                - tag: Name
+                  value: '{#SNMPVALUE}'
+            - uuid: 121a5f71ee1d4260921f3118b1acf090
+              name: 'AP {#SNMPVALUE} Ip Address'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.1.1.19.{#SNMPINDEX}'
+              key: 'bsnApIpAddress[{#SNMPVALUE}]'
+              delay: '3600'
+              history: 14d
+              trends: '0'
+              status: DISABLED
+              discover: NO_DISCOVER
+              description: 'Clients (Mobile Stations)'
+              tags:
+                - tag: Application
+                  value: 'AP data'
+                - tag: Name
+                  value: '{#SNMPVALUE}'
+            - uuid: 40394ee46c6d413c8406fbf275db3055
+              name: 'AP {#SNMPVALUE} Model'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.1.1.16.{#SNMPINDEX}'
+              key: 'bsnAPModel[{#SNMPVALUE}]'
+              delay: '3600'
+              history: 14d
+              trends: '0'
+              status: DISABLED
+              discover: NO_DISCOVER
+              description: 'Clients (Mobile Stations)'
+              tags:
+                - tag: Application
+                  value: 'AP data'
+                - tag: Name
+                  value: '{#SNMPVALUE}'
+            - uuid: 813fa90c27f445f885bde350dc2d9acb
+              name: 'AP {#SNMPVALUE} Primary Controller'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.1.1.10.{#SNMPINDEX}'
+              key: 'bsnAPPrimaryMwarName[{#SNMPVALUE}]'
+              delay: '3600'
+              history: 14d
+              trends: '0'
+              status: DISABLED
+              discover: NO_DISCOVER
+              description: 'Clients (Mobile Stations)'
+              tags:
+                - tag: Application
+                  value: 'AP data'
+                - tag: Name
+                  value: '{#SNMPVALUE}'
+            - uuid: ad6289b1956542e3b0021e0496590628
+              name: 'AP {#SNMPVALUE} Serial Number'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.1.1.17.{#SNMPINDEX}'
+              key: 'bsnAPSerialNumber[{#SNMPVALUE}]'
+              delay: '3600'
+              history: 14d
+              trends: '0'
+              status: DISABLED
+              discover: NO_DISCOVER
+              description: 'Clients (Mobile Stations)'
+              tags:
+                - tag: Application
+                  value: 'AP data'
+                - tag: Name
+                  value: '{#SNMPVALUE}'
+            - uuid: 80d16ea677b54a429e708c14663c6825
+              name: 'AP {#SNMPVALUE} Software Version'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.1.1.8.{#SNMPINDEX}'
+              key: 'bsnAPSoftwareVersion[{#SNMPVALUE}]'
+              delay: '3600'
+              history: 14d
+              trends: '0'
+              status: DISABLED
+              discover: NO_DISCOVER
+              description: 'Clients (Mobile Stations)'
+              tags:
+                - tag: Application
+                  value: 'AP data'
+                - tag: Name
+                  value: '{#SNMPVALUE}'
+            - uuid: 14baf50ab1e04d278b076e92dbf7587b
+              name: 'AP {#SNMPVALUE} ICMP ping'
+              type: SIMPLE
+              key: 'icmpping[{#SNMPIPAD}]'
+              delay: 5m
+              history: 365d
+              status: DISABLED
+              discover: NO_DISCOVER
+              valuemap:
+                name: 'Service state'
+              tags:
+                - tag: Application
+                  value: 'AP data'
+                - tag: Application
+                  value: Status
+                - tag: Name
+                  value: '{#SNMPVALUE}'
+              trigger_prototypes:
+                - uuid: ed4641249fa44ec99343fa5ac29a38c0
+                  expression: 'max(/template_Cisco_WiFi_WLC_62/icmpping[{#SNMPIPAD}],5m)=0'
+                  name: 'AP {#SNMPVALUE} ICMP ping Lost connection 5 minutes ago'
+                  status: DISABLED
+                  discover: NO_DISCOVER
+                  priority: AVERAGE
+                  description: 'Last three attempts returned timeout.  Please check device connectivity.'
+          graph_prototypes:
+            - uuid: 607451b3f7ef4c1baa316ed01f781f7e
+              name: '{#SNMPVALUE} no. of users'
+              show_work_period: 'NO'
+              show_triggers: 'NO'
+              ymin_type_1: FIXED
+              graph_items:
+                - color: 2774A4
+                  item:
+                    host: template_Cisco_WiFi_WLC_62
+                    key: 'bsnApIfNoOfUsers0[{#SNMPVALUE}]'
+                - color: 2774A4
+                  item:
+                    host: template_Cisco_WiFi_WLC_62
+                    key: 'bsnApIfNoOfUsers1[{#SNMPVALUE}]'
+          host_prototypes:
+            - uuid: c4210762a7ac4955b5aa65a391bbc447
+              host: '{#SNMPVALUE}'
+              name: '{#SNMPVALUE}'
+              inventory_mode: AUTOMATIC
+              group_links:
+                - group:
+                    name: 'Discovered hosts'
+              templates:
+                - name: template_Cisco_WiFi_WLC_62_AP
+              macros:
+                - macro: '{$SNMPINDEX}'
+                  value: '{#SNMPINDEX}'
+                - macro: '{$SNMPIPAD}'
+                  value: '{#SNMPIPAD}'
+                - macro: '{$SNMPVALUE}'
+                  value: '{#SNMPVALUE}'
+          preprocessing:
+            - type: STR_REPLACE
+              parameters:
+                - /
+                - _
+        - uuid: 9d8966249ffb4632b02a4c291693bea8
+          name: 'WLC SSID data'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#SNMPVALUE},1.3.6.1.4.1.14179.2.1.1.1.2]'
+          key: bsnDot11EssSsid
+          delay: '3600'
+          lifetime: 14d
+          description: 'SSID assigned to ESS(WLAN)'
+          item_prototypes:
+            - uuid: 4a96d122c75c49fcbbec88d9d89e53b1
+              name: 'WiFi - {#SNMPVALUE} - Number of users'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.1.1.1.38.{#SNMPINDEX}'
+              key: 'bsnDot11EssNumberOfMobileStations[{#SNMPVALUE}]'
+              delay: '30'
+              history: 365d
+              trends: 30d
+              description: |
+                "No of Mobile Stations currently associated with the
+                WLAN."
+              tags:
+                - tag: Application
+                  value: 'SSID data'
+                - tag: SSID
+                  value: '{#SNMPVALUE}'
+          graph_prototypes:
+            - uuid: 81f6fdb333134aa1bb99ea4f0127dd38
+              name: '{#SNMPVALUE} Total No Of Users Associated'
+              show_triggers: 'NO'
+              ymin_type_1: FIXED
+              graph_items:
+                - color: 2774A4
+                  item:
+                    host: template_Cisco_WiFi_WLC_62
+                    key: 'bsnDot11EssNumberOfMobileStations[{#SNMPVALUE}]'
+        - uuid: 58d5ffc59b774e538e1765605804e312
+          name: 'WLC Clients data'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#MAC},1.3.6.1.4.1.14179.2.1.4.1.1,{#USERNAME},1.3.6.1.4.1.14179.2.1.4.1.3]'
+          key: bsnMobileStationMacAddress
+          delay: '60'
+          status: DISABLED
+          filter:
+            conditions:
+              - macro: '{#USERNAME}'
+                value: .+
+                formulaid: A
+              - macro: '{#USERNAME}'
+                value: '^(?i)(guest|gost|test).*$'
+                operator: NOT_MATCHES_REGEX
+                formulaid: B
+          lifetime: 1d
+          description: '802.11 MAC Address of the Mobile Station.'
+          item_prototypes:
+            - uuid: 4e66c8aec52b4f52b506c9f7844bfdc4
+              name: '{#USERNAME} [{#MAC}] - Client Incoming Bytes'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.1.6.1.2.{#SNMPINDEX}'
+              key: 'bsnMobileStationBytesReceived[{#SNMPINDEX}]'
+              delay: '60'
+              history: 1d
+              trends: 14d
+              units: B
+              description: 'Bytes received from Mobile Station'
+              tags:
+                - tag: Application
+                  value: 'Clients data'
+                - tag: component
+                  value: client
+                - tag: user
+                  value: '{#USERNAME}'
+            - uuid: 17a3d75cd0c040149bbaea7c05f493e6
+              name: '{#USERNAME} [{#MAC}] - Client Outcoming Bytes'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.1.6.1.3.{#SNMPINDEX}'
+              key: 'bsnMobileStationBytesSent[{#SNMPINDEX}]'
+              delay: '60'
+              history: 1d
+              trends: 14d
+              units: B
+              description: 'Bytes sent to Mobile Station'
+              tags:
+                - tag: Application
+                  value: 'Clients data'
+                - tag: component
+                  value: client
+                - tag: user
+                  value: '{#USERNAME}'
+            - uuid: 10c9872fb1ba41f89459cdec59547fd9
+              name: '{#USERNAME} [{#MAC}] - Client Ip Address'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.1.4.1.2.{#SNMPINDEX}'
+              key: 'bsnMobileStationIpAddress[{#SNMPINDEX}]'
+              delay: '60'
+              history: 14d
+              value_type: TEXT
+              trends: '0'
+              description: 'IP Address of the Mobile Station'
+              tags:
+                - tag: Application
+                  value: 'Clients data'
+                - tag: component
+                  value: client
+                - tag: user
+                  value: '{#USERNAME}'
+            - uuid: d09dc88e263b40aab397c373a0270ca4
+              name: '{#USERNAME} [{#MAC}] - Client RSSI'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.1.6.1.1.{#SNMPINDEX}'
+              key: 'bsnMobileStationRSSI[{#SNMPINDEX}]'
+              delay: '60'
+              history: 30d
+              value_type: FLOAT
+              units: dB
+              description: 'Average packet RSSI for the Mobile Station.'
+              tags:
+                - tag: Application
+                  value: 'Clients data'
+                - tag: component
+                  value: client
+                - tag: user
+                  value: '{#USERNAME}'
+        - uuid: 69d242c518a844dc98e50b4c3e53b85b
+          name: 'WLC Interfaces data'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#SNMPVALUE},IF-MIB::ifDescr]'
+          key: ifDescr
+          delay: '3600'
+          status: DISABLED
+          filter:
+            conditions:
+              - macro: '{#SNMPVALUE}'
+                value: '@WLCs uplink interfaces'
+                formulaid: A
+          description: |
+            You may also consider using IF-MIB::ifType or IF-MIB::ifAlias for discovery depending on your filtering needs.
+            
+            {$SNMP_COMMUNITY} is a global macro.
+          item_prototypes:
+            - uuid: 94fcfde1877a45bcb2912f9f176a0fcc
+              name: 'Inbound errors on interface {#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: 'IF-MIB::ifInErrors.{#SNMPINDEX}'
+              key: 'ifInErrors[{#SNMPVALUE}]'
+              delay: '60'
+              history: 7d
+              description: 'For packet-oriented interfaces, the number of inbound packets that contained errors preventing them from being deliverable to a higher-layer protocol.  For character-oriented or fixed-length interfaces, the number of inbound transmission units that contained errors preventing them from being deliverable to a higher-layer protocol.'
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+              tags:
+                - tag: Application
+                  value: General
+            - uuid: b815b617696d4d24bac6ce7ba147c059
+              name: 'Incoming traffic on interface {#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: 'IF-MIB::ifInOctets.{#SNMPINDEX}'
+              key: 'ifInOctets[{#SNMPVALUE}]'
+              delay: '60'
+              history: 7d
+              units: bps
+              description: 'The number of octets in valid MAC frames received on this interface, including the MAC header and FCS.'
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                - type: MULTIPLIER
+                  parameters:
+                    - '8'
+              tags:
+                - tag: Application
+                  value: General
+            - uuid: 88f91978c2a74a7ea4088727eab06ca8
+              name: 'Outbound errors on interface {#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: 'IF-MIB::ifOutErrors.{#SNMPINDEX}'
+              key: 'ifOutErrors[{#SNMPVALUE}]'
+              delay: '60'
+              history: 7d
+              description: 'For packet-oriented interfaces, the number of outbound packets that could not be transmitted because of errors. For character-oriented or fixed-length interfaces, the number of outbound transmission units that could not be transmitted because of errors.'
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+              tags:
+                - tag: Application
+                  value: General
+            - uuid: e9b6f4b890984d2083ae0f3d8fd345e0
+              name: 'Outgoing traffic on interface {#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: 'IF-MIB::ifOutOctets.{#SNMPINDEX}'
+              key: 'ifOutOctets[{#SNMPVALUE}]'
+              delay: '60'
+              history: 7d
+              units: bps
+              description: 'The number of octets transmitted in MAC frames on this interface, including the MAC header and FCS.'
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                - type: MULTIPLIER
+                  parameters:
+                    - '8'
+              tags:
+                - tag: Application
+                  value: General
+          graph_prototypes:
+            - uuid: ad5441d7ddad4093abca9034b075c77f
+              name: 'Traffic on interface {#SNMPVALUE}'
+              graph_items:
+                - color: 2774A4
+                  item:
+                    host: template_Cisco_WiFi_WLC_62
+                    key: 'ifInOctets[{#SNMPVALUE}]'
+                - color: 2774A4
+                  item:
+                    host: template_Cisco_WiFi_WLC_62
+                    key: 'ifOutOctets[{#SNMPVALUE}]'
+      macros:
+        - macro: '{$SNMP.TIMEOUT}'
+          value: 5m
+      valuemaps:
+        - uuid: 846cd5c2a8bf43e2bb7633bf34365b58
+          name: 'Service state'
+          mappings:
+            - value: '0'
+              newvalue: Down
+            - value: '1'
+              newvalue: Up
+        - uuid: 0a537091a62446c497f54ab163a5b366
+          name: zabbix.host.available
+          mappings:
+            - value: '0'
+              newvalue: 'not available'
+            - value: '1'
+              newvalue: available
+            - value: '2'
+              newvalue: unknown
+  triggers:
+    - uuid: daf6bcc9d164405080f1b4c3726c5114
+      expression: (last(/template_Cisco_WiFi_WLC_62/agentFreeMemory)/last(/template_Cisco_WiFi_WLC_62/agentTotalMemory))<0.20
+      name: '{HOST.NAME} - Free memory too low'
+      priority: AVERAGE
