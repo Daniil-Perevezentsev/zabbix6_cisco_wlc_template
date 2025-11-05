@@ -1,0 +1,1 @@
+# zabbix6_cisco_wlc_template
