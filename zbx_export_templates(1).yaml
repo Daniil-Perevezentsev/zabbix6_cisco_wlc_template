@@ -1,0 +1,357 @@
+zabbix_export:
+  version: '6.4'
+  template_groups:
+    - uuid: 514ab8ebc2424e608e6010b31d81f122
+      name: 'Discovered hosts'
+    - uuid: b5b41aae1d65468186019f06a83d7ebb
+      name: Templates
+  templates:
+    - uuid: b5fa920205b4400c9d2a147dab881f06
+      template: template_Cisco_WiFi_WLC_62_AP
+      name: template_Cisco_WiFi_WLC_62_AP
+      description: |
+        DO NOT ATTACH!!!
+        Created automatically by the main template
+      groups:
+        - name: 'Discovered hosts'
+        - name: Templates
+      items:
+        - uuid: 1cb8ba550b7549729937d5f9f8c69bbf
+          name: 'AP Boot Version'
+          type: SNMP_AGENT
+          snmp_oid: '1.3.6.1.4.1.14179.2.2.1.1.9.{$SNMPINDEX}'
+          key: bsnAPBootVersion
+          delay: 1h
+          history: 14d
+          trends: '0'
+          tags:
+            - tag: Application
+              value: 'AP data'
+        - uuid: e611033b3c3449919ceb462601f84430
+          name: 'AP MAC Address WiFi'
+          type: SNMP_AGENT
+          snmp_oid: '1.3.6.1.4.1.14179.2.2.1.1.1.{$SNMPINDEX}'
+          key: bsnAPDot3MacAddress
+          delay: 1h
+          history: 30d
+          trends: '0'
+          tags:
+            - tag: Application
+              value: 'AP data'
+        - uuid: 6ec4c9910ffe4340a9dc069173e84566
+          name: 'AP MAC Address Ethernet'
+          type: SNMP_AGENT
+          snmp_oid: '1.3.6.1.4.1.14179.2.2.1.1.33.{$SNMPINDEX}'
+          key: bsnAPEthernetMacAddress
+          delay: 1h
+          history: 30d
+          trends: '0'
+          tags:
+            - tag: Application
+              value: 'AP data'
+        - uuid: 3f11b709b2084ebe982da7bb2d6b6ee4
+          name: 'AP If No Of Users 2.4 GHz'
+          type: SNMP_AGENT
+          snmp_oid: '1.3.6.1.4.1.14179.2.2.2.1.15.{$SNMPINDEX}.0'
+          key: bsnApIfNoOfUsers0
+          history: 30d
+          tags:
+            - tag: Application
+              value: 'AP data'
+        - uuid: fecbb5fcc05243ebb778849589306214
+          name: 'AP If No Of Users 5 GHz'
+          type: SNMP_AGENT
+          snmp_oid: '1.3.6.1.4.1.14179.2.2.2.1.15.{$SNMPINDEX}.1'
+          key: bsnApIfNoOfUsers1
+          history: 30d
+          tags:
+            - tag: Application
+              value: 'AP data'
+        - uuid: 873dc4a4a1464853a868b2d75c521d44
+          name: 'AP If Phy Channel Number 2.4 GHz'
+          type: SNMP_AGENT
+          snmp_oid: '1.3.6.1.4.1.14179.2.2.2.1.4.{$SNMPINDEX}.0'
+          key: bsnAPIfPhyChannelNumber0
+          delay: 5m
+          history: 30d
+          trends: '0'
+          description: |
+            Current channel number of the AP Interface.
+            Channel numbers will  be from 1 to 14 for 802.11b interface type.
+            Channel numbers will be from  34 to 169 for 802.11a interface 
+            type.
+          tags:
+            - tag: Application
+              value: 'AP data'
+        - uuid: a9d9ef06c928433b9979dab5df04261d
+          name: 'AP If Phy Channel Number 5 GHz'
+          type: SNMP_AGENT
+          snmp_oid: '1.3.6.1.4.1.14179.2.2.2.1.4.{$SNMPINDEX}.1'
+          key: bsnAPIfPhyChannelNumber1
+          delay: 5m
+          history: 30d
+          trends: '0'
+          description: |
+            Current channel number of the AP Interface.
+            Channel numbers will  be from 1 to 14 for 802.11b interface type.
+            Channel numbers will be from  34 to 169 for 802.11a interface 
+            type.
+          tags:
+            - tag: Application
+              value: 'AP data'
+        - uuid: ed5d6488a9a64456ad3b9f48a2b05fd7
+          name: 'AP IOS Version'
+          type: SNMP_AGENT
+          snmp_oid: '1.3.6.1.4.1.14179.2.2.1.1.31.{$SNMPINDEX}'
+          key: bsnAPIOSVersion
+          delay: 1h
+          history: 30d
+          trends: '0'
+          tags:
+            - tag: Application
+              value: 'AP data'
+        - uuid: 8a7f978328a94991aef7e53ff2c3c8cd
+          name: 'AP Ip Address'
+          type: SNMP_AGENT
+          snmp_oid: '1.3.6.1.4.1.14179.2.2.1.1.19.{$SNMPINDEX}'
+          key: bsnApIpAddress
+          delay: 1h
+          history: 30d
+          trends: '0'
+          inventory_link: URL_A
+          tags:
+            - tag: Application
+              value: 'AP data'
+            - tag: Name
+              value: '{$SNMPVALUE}'
+        - uuid: 4fd664deff3e4206b13ad0e7014c8aa1
+          name: 'AP Model'
+          type: SNMP_AGENT
+          snmp_oid: '1.3.6.1.4.1.14179.2.2.1.1.16.{$SNMPINDEX}'
+          key: bsnAPModel
+          delay: 1h
+          history: 30d
+          trends: '0'
+          inventory_link: MODEL
+          tags:
+            - tag: Application
+              value: 'AP data'
+        - uuid: 47fead3410f54de4a79a54b8b51e638d
+          name: 'AP Primary Controller'
+          type: SNMP_AGENT
+          snmp_oid: '1.3.6.1.4.1.14179.2.2.1.1.10.{$SNMPINDEX}'
+          key: bsnAPPrimaryMwarName
+          delay: 1h
+          history: 30d
+          trends: '0'
+          preprocessing:
+            - type: CHECK_NOT_SUPPORTED
+              parameters:
+                - ''
+              error_handler: CUSTOM_VALUE
+              error_handler_params: 'Lost WLC Connection'
+          tags:
+            - tag: Application
+              value: 'AP data'
+          triggers:
+            - uuid: 44d7e61ac1284bfcb0e6e897fce22ac3
+              expression: 'last(/template_Cisco_WiFi_WLC_62_AP/bsnAPPrimaryMwarName)="Lost WLC Connection"'
+              name: 'AP Lost Communication with Controller'
+              priority: AVERAGE
+              description: |
+                The AP is pinging but has lost contact with the controller. The device needs to be rebooted.
+                
+                If "sh CDP ne" shows Capability = T B I then restarting the AP will help (sh - no sh )
+                If Capability = T B AP flashing is required.
+              manual_close: 'YES'
+              dependencies:
+                - name: 'AP {HOST.NAME} ICMP ping Lost connection 5 minutes ago'
+                  expression: 'max(/template_Cisco_WiFi_WLC_62_AP/icmpping[{$SNMPIPAD}],5m)=0'
+        - uuid: b9c64612675c4dc3b72c1529478dc4f3
+          name: 'AP Serial Number'
+          type: SNMP_AGENT
+          snmp_oid: '1.3.6.1.4.1.14179.2.2.1.1.17.{$SNMPINDEX}'
+          key: bsnAPSerialNumber
+          delay: 1h
+          history: 30d
+          trends: '0'
+          inventory_link: SERIALNO_A
+          tags:
+            - tag: Application
+              value: 'AP data'
+        - uuid: 8a8b98f19787468fba83a8afccf77cb4
+          name: 'AP Software Version'
+          type: SNMP_AGENT
+          snmp_oid: '1.3.6.1.4.1.14179.2.2.1.1.8.{$SNMPINDEX}'
+          key: bsnAPSoftwareVersion
+          delay: 1h
+          history: 30d
+          trends: '0'
+          tags:
+            - tag: Application
+              value: 'AP data'
+        - uuid: 79e4b1481cd8436cbdc0bcd24a33bd2a
+          name: 'AP ICMP ping'
+          type: SIMPLE
+          key: 'icmpping[{$SNMPIPAD}]'
+          delay: 5m
+          history: 30d
+          valuemap:
+            name: 'Service state'
+          tags:
+            - tag: Application
+              value: 'AP data'
+            - tag: Application
+              value: Status
+          triggers:
+            - uuid: 0a3aa2ea12294b7089a38903a58a2e94
+              expression: 'max(/template_Cisco_WiFi_WLC_62_AP/icmpping[{$SNMPIPAD}],5m)=0'
+              name: 'AP {HOST.NAME} ICMP ping Lost connection 5 minutes ago'
+              priority: AVERAGE
+              manual_close: 'YES'
+      discovery_rules:
+        - uuid: 7a25253c6ba04afd92e58a8d043334c8
+          name: 'AP discovery (Name)'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#APNAME},1.3.6.1.4.1.14179.2.2.1.1.4]'
+          key: ap.discovery
+          item_prototypes:
+            - uuid: ec26fd3cc447440b9703723c1b08d1f2
+              name: 'AP {#APNAME} Channel Utilization % (2.4G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.13.1.3.{#SNMPINDEX}.0'
+              key: 'ap.radio.channel.util[{#SNMPINDEX},0]'
+              units: '%'
+              tags:
+                - tag: component
+                  value: rf
+            - uuid: 7685031533ac4acf9340dfe56f720c16
+              name: 'AP {#APNAME} Channel Utilization % (5G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.13.1.3.{#SNMPINDEX}.1'
+              key: 'ap.radio.channel.util[{#SNMPINDEX},1]'
+              units: '%'
+              tags:
+                - tag: component
+                  value: rf
+            - uuid: 6cfdbd0c68204620be684a36299a264b
+              name: 'AP {#APNAME} Interference Profile State (2.4G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.16.1.2.{#SNMPINDEX}.0'
+              key: 'ap.radio.interference.profile[{#SNMPINDEX},0]'
+              description: '0=Fail, 1=Pass'
+              tags:
+                - tag: component
+                  value: rf
+            - uuid: 2ab7252adcf8422fb84c5f0122fa6cfe
+              name: 'AP {#APNAME} Interference Profile State (5G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.16.1.2.{#SNMPINDEX}.1'
+              key: 'ap.radio.interference.profile[{#SNMPINDEX},1]'
+              description: '0=Fail, 1=Pass'
+              tags:
+                - tag: component
+                  value: rf
+            - uuid: e5ba826306044f1f8e1fd7467ddfaa4f
+              name: 'AP {#APNAME} Noise Profile State (2.4G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.16.1.3.{#SNMPINDEX}.0'
+              key: 'ap.radio.noise.profile[{#SNMPINDEX},0]'
+              description: '0=Fail, 1=Pass'
+              tags:
+                - tag: component
+                  value: rf
+            - uuid: 1c9cc399f8334c28a697d31afeb78642
+              name: 'AP {#APNAME} Noise Profile State (5G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.16.1.3.{#SNMPINDEX}.1'
+              key: 'ap.radio.noise.profile[{#SNMPINDEX},1]'
+              description: '0=Fail, 1=Pass'
+              tags:
+                - tag: component
+                  value: rf
+            - uuid: 39180a7197d34853934bf09da69b613c
+              name: 'AP {#APNAME} Rx Utilization % (2.4G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.13.1.1.{#SNMPINDEX}.0'
+              key: 'ap.radio.rx.util[{#SNMPINDEX},0]'
+              units: '%'
+              tags:
+                - tag: component
+                  value: rf
+            - uuid: 037e64713977408aa4830651e98850e6
+              name: 'AP {#APNAME} Rx Utilization % (5G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.13.1.1.{#SNMPINDEX}.1'
+              key: 'ap.radio.rx.util[{#SNMPINDEX},1]'
+              units: '%'
+              tags:
+                - tag: component
+                  value: rf
+            - uuid: 9a8a23d8a36e415493a4f1dacee53492
+              name: 'AP {#APNAME} Tx Utilization % (2.4G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.13.1.2.{#SNMPINDEX}.0'
+              key: 'ap.radio.tx.util[{#SNMPINDEX},0]'
+              units: '%'
+              tags:
+                - tag: component
+                  value: rf
+            - uuid: c2e06098fd3247f4aa853279ee0dab4e
+              name: 'AP {#APNAME} Tx Utilization % (5G)'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.14179.2.2.13.1.2.{#SNMPINDEX}.1'
+              key: 'ap.radio.tx.util[{#SNMPINDEX},1]'
+              units: '%'
+              tags:
+                - tag: component
+                  value: rf
+          graph_prototypes:
+            - uuid: a670573d7cc14f93a30329e06d8330c2
+              name: '{#APNAME}'
+              graph_items:
+                - color: 2774A4
+                  item:
+                    host: template_Cisco_WiFi_WLC_62_AP
+                    key: 'ap.radio.channel.util[{#SNMPINDEX},0]'
+                - color: 1A7C11
+                  item:
+                    host: template_Cisco_WiFi_WLC_62_AP
+                    key: 'ap.radio.rx.util[{#SNMPINDEX},0]'
+                - color: F63100
+                  item:
+                    host: template_Cisco_WiFi_WLC_62_AP
+                    key: 'ap.radio.tx.util[{#SNMPINDEX},0]'
+                - color: 6C59DC
+                  item:
+                    host: template_Cisco_WiFi_WLC_62_AP
+                    key: 'ap.radio.channel.util[{#SNMPINDEX},1]'
+                - color: AC8C14
+                  item:
+                    host: template_Cisco_WiFi_WLC_62_AP
+                    key: 'ap.radio.rx.util[{#SNMPINDEX},1]'
+                - color: E66B00
+                  item:
+                    host: template_Cisco_WiFi_WLC_62_AP
+                    key: 'ap.radio.tx.util[{#SNMPINDEX},1]'
+      macros:
+        - macro: '{$MAC_ADD_DEC}'
+          value: 0.39.13.47.86.80
+          description: 'Decimal display mac address'
+      valuemaps:
+        - uuid: 394bae3091f04d26957f05fc25c3ca57
+          name: 'Service state'
+          mappings:
+            - value: '0'
+              newvalue: Down
+            - value: '1'
+              newvalue: Up
+        - uuid: 7357e59a76444ef0bc1886ee8621d03c
+          name: zabbix.host.available
+          mappings:
+            - value: '0'
+              newvalue: 'not available'
+            - value: '1'
+              newvalue: available
+            - value: '2'
+              newvalue: unknown
